@@ -6,4 +6,12 @@ module MeasureReportsHelper
     end
   end
 
+  def formatted_date(date)
+    date.strftime("%B %Y")
+  end
+
+  def pattern_for_field_type(field_type)
+    field_type == 'number' ? "(?:\\+|\\-|\\$)?\\d{1,}(?:\\,?\\d{3})*(?:\\.\\d+)?%?" : ".+"
+  end
+
 end

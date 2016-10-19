@@ -8,10 +8,10 @@ class MeasureReportsController < ApplicationController
   # GET /measure_reports
   # GET /measure_reports.json
   def index
-    @measure_reports = MeasureReport.includes(:author, :last_editor, performance_measure: [:key_focus_area, objective: :key_focus_area]).where(expired: false).order('key_focus_areas.name ASC, key_focus_areas_objectives.name ASC, objectives.name ASC').paginate(:page => params[:page], :per_page => 12)
+    @measure_reports = MeasureReport.filter_query(query_params).includes(:author, :last_editor, performance_measure: [:key_focus_area, objective: :key_focus_area]).where(expired: false).order('key_focus_areas.name ASC, key_focus_areas_objectives.name ASC, objectives.name ASC').paginate(:page => params[:page], :per_page => 12)
   end
 
-  def download
+  def measure_reports
     @measure_reports = MeasureReport.includes(:author, :last_editor, performance_measure: [:key_focus_area, objective: :key_focus_area]).order('key_focus_areas.name ASC, key_focus_areas_objectives.name ASC, objectives.name ASC')
 
     respond_to do |format|
@@ -84,7 +84,7 @@ class MeasureReportsController < ApplicationController
     @measure_report.update({expired: true})
     respond_to do |format|
       format.html { redirect_to measure_reports_url, notice: 'Measure report was successfully deleted.' }
-      format.js   { render :destroy, :locals => { id: params[:id] } }
+      format.js   { render 'shared/destroy', locals: { resource: @measure_report, data_label: "report" } }
       format.json { head :no_content }
     end
   end
@@ -108,5 +108,9 @@ class MeasureReportsController < ApplicationController
       params.fetch(:measure_report, {}).permit( :performance_measure_id, :performance, :status, 
                                                 :date_start, :date_end, :comments, :bms_comments,
                                                 performance_factor_entries_attributes: [:id, :_destroy, :data, :performance_factor_id, :comments])
+    end
+
+    def query_params
+      params.fetch(:query, {}).permit('key_focus_areas.id', 'objectives.id', 'performance_measures.id', 'measure_reports.id', 'author.id')
     end
 end

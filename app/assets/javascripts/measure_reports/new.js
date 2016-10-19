@@ -15,7 +15,7 @@
       if (this.value === '') { return; }
       focusAreaId = this.value;
       $('#objective-selection').remove();
-      objectiveRadio = $('<div class="form-group" id="objective-selection"><label class="col-md-3 control-label limit-text">Objective</label><div class="col-md-9" id="objectives-wrapper"><p>Is there an objective for this measure?</p><div class="radio"><label><input type="radio" name="optionsRadios" value="yes">Yes</label></div><div class="radio"><label><input type="radio" name="optionsRadios" value="no">No</label></div></div></div>').insertAfter('#key-focus-area-selection');
+      objectiveRadio = $('<div class="form-group" id="objective-selection"><label class="col-md-3 control-label limit-text">Objective</label><div class="col-md-9" id="objectives-wrapper"><p>Is there an objective for this measure?</p><div class="radio"><label><input type="radio" name="optionsRadios" value="yes">Yes</label></div><div class="radio"><label><input type="radio" name="optionsRadios" value="no">No</label></div></div></div>').insertAfter('#key-focus-area-selection').hide().fadeIn('slow');
       objectiveRadio[0].addEventListener('change', changeObjectiveGroup);
     }
 
@@ -40,11 +40,11 @@
     function generateObjectivesDropdown(response) {
       var wrapper = $('#objectives-wrapper');
       if (response.length === 0) {
-        wrapper[0].innerHTML = '<p>There are no objectives for this key focus area. <a href="/objectives/new" class="btn btn-primary btn-xs">Create one?</a></p>';
+        wrapper[0].innerHTML = '<p>There are no objectives for this key focus area.</p>';
         return;
       }
       wrapper[0].innerHTML = '';
-      var objectiveSelect = $('<select class="form-control" name="performance_measure[objective_id]" id="performance_measure_object_id"></select>').appendTo(wrapper);
+      var objectiveSelect = $('<select class="form-control" name="performance_measure[objective_id]" id="performance_measure_object_id"></select>').appendTo(wrapper).hide().fadeIn('slow');
       var options = '<option value="">Please Select the Key Focus Area Objective</option>';
       response.forEach(function(objective) {
         options += ('<option value="' + objective.id + '">' + objective.name + '</option>');
@@ -57,7 +57,7 @@
       if (this.value === '') { return; }
       
       $('#measure-selection').remove();
-      measuresDropdown = $('<div class="form-group" id="measure-selection"><label class="col-md-3 control-label limit-text">Measure</label><div class="col-md-9" id="measures-wrapper"></div></div>').insertAfter(objectiveRadio);
+      measuresDropdown = $('<div class="form-group" id="measure-selection"><label class="col-md-3 control-label limit-text">Measure</label><div class="col-md-9" id="measures-wrapper"></div></div>').insertAfter(objectiveRadio).hide().fadeIn('slow');
 
       var kfaData = { measurable_id: focusAreaId, measurable_type: 'KeyFocusArea' };
       var objectiveData = { measurable_id: this.value, measurable_type: 'Objective' };
@@ -70,11 +70,11 @@
     function generateMeasuresDropdown(response) {
       var wrapper = measuresDropdown.find('#measures-wrapper');
       if (response.length === 0) {
-        wrapper[0].innerHTML = '<p>No measures found. <a href="/performance_measures/new" class="btn btn-primary btn-xs">Create one?</a></p>';
+        wrapper[0].innerHTML = '<p>No measures found.</p>';
         return;
       }
       measuresResponse = response;
-      var measureSelect = $('<select class="form-control" name="measure_report[performance_measure_id]" id="measure_report_performance_measure_id"></select>').appendTo(wrapper);
+      var measureSelect = $('<select class="form-control" name="measure_report[performance_measure_id]" id="measure_report_performance_measure_id"></select>').appendTo(wrapper).hide().fadeIn('slow');
       var options = '<option value="">Please Select the Performance Measure</option>';
       response.forEach(function(measure) {
         options += ('<option value="' + measure.id + '">' + measure.description + '</option>');
@@ -94,50 +94,74 @@
     }
 
     function generateAllMeasureFields(measure) {
-      var attributes =  '<div class="form-group" id="measure-attributes">' +
-                          '<label class="col-md-3 control-label limit-text">Target</label>' +
-                          '<div class="col-md-3">' +
-                            '<p>' + (measure.target || 'N/A') + '</p>' +
+      var attributes =  '<div id="measure-attributes">' +
+                          
+                          '<div class="form-group">' +
+                            '<label class="col-md-3 control-label limit-text">Target</label>' +
+                            '<div class="col-md-3">' +
+                              '<p>' + (measure.target || 'N/A') + '</p>' +
+                            '</div>' +
+                            '<label class="col-md-3 control-label limit-text">Unit of Measure</label>' +
+                            '<div class="col-md-3">' +
+                              '<p>' + (measure.unit_of_measure || 'N/A') + '</p>' +
+                            '</div>' +
                           '</div>' +
-                          '<label class="col-md-3 control-label limit-text">Unit of Measure</label>' +
-                          '<div class="col-md-3">' +
-                            '<p>' + (measure.unit_of_measure || 'N/A') + '</p>' +
+                          
+                          '<div class="form-group">' +
+                            '<label class="col-md-3 control-label limit-text">Measurement Formula</label>' +
+                            '<div class="col-md-9">' +
+                              '<p>' + (measure.measurement_formula || 'N/A') + '</p>' +
+                            '</div>' +
                           '</div>' +
-                          '<label class="col-md-3 control-label limit-text">Measurement Formula</label>' +
-                          '<div class="col-md-9">' +
-                            '<p>' + (measure.measurement_formula || 'N/A') + '</p>' +
+                          
+                          '<div class="form-group">' +
+                            '<label class="col-md-3 control-label limit-text">Data Source</label>' +
+                            '<div class="col-md-9">' +
+                              '<p>' + (measure.data_source || 'N/A') + '</p>' +
+                            '</div>' +
                           '</div>' +
-                          '<label class="col-md-3 control-label limit-text">Data Source</label>' +
-                          '<div class="col-md-9">' +
-                            '<p>' + (measure.data_source || 'N/A') + '</p>' +
+                          
+                          '<div class="form-group">' +
+                            '<label class="col-md-3 control-label limit-text">Rationale for Target</label>' +
+                            '<div class="col-md-9">' +
+                              '<p>' + (measure.rationale_for_target || 'N/A') + '</p>' +
+                            '</div>' +
                           '</div>' +
-                          '<label class="col-md-3 control-label limit-text">Rationale for Target</label>' +
-                          '<div class="col-md-9">' +
-                            '<p>' + (measure.rationale_for_target || 'N/A') + '</p>' +
+                          
+                          '<div class="form-group">' +
+                            '<label class="col-md-3 control-label limit-text">Data Contact Name</label>' +
+                            '<div class="col-md-3">' +
+                              '<p>' + (measure.data_contact_person || 'N/A') + '</p>' +
+                            '</div>' +
+                          
+                            '<label class="col-md-2 control-label limit-text">Email</label>' +
+                            '<div class="col-md-4">' +
+                              '<p>' + (measure.data_contact_person_email || 'N/A') + '</p>' +
+                            '</div>' +
                           '</div>' +
-                          '<label class="col-md-3 control-label limit-text">Data Contact Name</label>' +
-                          '<div class="col-md-3">' +
-                            '<p>' + (measure.data_contact_person || 'N/A') + '</p>' +
+                          
+                          '<div class="form-group">' +
+                            '<label class="col-md-3 control-label limit-text">Person Reporting to BMS</label>' +
+                            '<div class="col-md-3">' +
+                              '<p>' + (measure.person_reporting_data_to_bms || 'N/A') + '</p>' +
+                            '</div>' +
+                            
+                            '<label class="col-md-2 control-label limit-text">Email</label>' +
+                            '<div class="col-md-4">' +
+                              '<p>' + (measure.person_reporting_data_to_bms_email || 'N/A') + '</p>' +
+                            '</div>' +
                           '</div>' +
-                          '<label class="col-md-2 control-label limit-text">Email</label>' +
-                          '<div class="col-md-4">' +
-                            '<p>' + (measure.data_contact_person_email || 'N/A') + '</p>' +
-                          '</div>' +
-                          '<label class="col-md-3 control-label limit-text">Person Reporting to BMS</label>' +
-                          '<div class="col-md-3">' +
-                            '<p>' + (measure.person_reporting_data_to_bms || 'N/A') + '</p>' +
-                          '</div>' +
-                          '<label class="col-md-2 control-label limit-text">Email</label>' +
-                          '<div class="col-md-4">' +
-                            '<p>' + (measure.person_reporting_data_to_bms_email || 'N/A') + '</p>' +
-                          '</div>' +
-                          '<label class="col-md-3 control-label limit-text">Notes/Comments</label>' +
-                          '<div class="col-md-9">' +
-                            '<p>' + (measure.notes || '') + '</p>' +
+                          
+                          '<div class="form-group">' +
+                            '<label class="col-md-3 control-label limit-text">Notes/Comments</label>' +
+                            '<div class="col-md-9">' +
+                              '<p>' + (measure.notes || '') + '</p>' +
+                            '</div>' +
                           '</div>' +
                         '</div>';
+      
       $('#measure-attributes').remove();
-      $(attributes).insertAfter(measuresDropdown);
+      $(attributes).insertAfter(measuresDropdown).hide().fadeIn('slow');
       getFactorEntryFields(measure.id);
     }
 
@@ -151,23 +175,6 @@
         dataType: 'script'
       });
 
-    }
-
-    // Runs on page load when it is hidden
-    document.getElementById('measure_report_status').addEventListener('change', requireComment);
-    
-    function requireComment(evt) {
-      var text = evt.srcElement.value;
-      var commentsField = document.getElementById('measure_report_comments');
-      if (text === 'All is well with performance. Target will be or is met.') {
-        commentsField.required = false;
-        $('#comment-hint').remove();
-      } else {
-        commentsField.required = true;
-        if ($('#comment-hint').length === 0) {
-          $(evt.srcElement).after('<p id="comment-hint"><em>Please provide context regarding the performance of this measure in the comments below.</em></p>')
-        }
-      }
     }
 
   });

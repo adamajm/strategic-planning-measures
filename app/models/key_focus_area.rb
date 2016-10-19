@@ -2,29 +2,45 @@ class KeyFocusArea < ActiveRecord::Base
 
   # ----------------------- Associations --------------------
 
-  has_many :objectives, dependent: :destroy
+  has_many  :objectives, 
+            dependent: :destroy
 
-  has_many :measures, as: :measurable, dependent: :destroy, class_name: "PerformanceMeasure"
+  has_many  :measures, 
+            as: :measurable, 
+            dependent: :destroy, 
+            class_name: "PerformanceMeasure"
 
-  belongs_to :author, foreign_key: :created_by_user_id, class_name: "User"
+  include UserRules
+
+  # ----------------------- Callbacks --------------------
   
-  belongs_to :last_editor, foreign_key: :last_updated_by_user_id, class_name: "User"
+  before_create :author_is_admin
+  before_update :editor_is_admin
 
   # ----------------------- Logo --------------------
   
   has_attached_file :logo, 
-                    styles: { medium: "300x300>", thumb: "100x100>" }, 
+                    styles: { medium: "300x300>", thumb: "100x100>" },
                     default_url: "/images/honeycomb.png",
-                    storage: :s3  
+                    storage: :s3,
+                    s3_protocol: :https
   
-  validates_attachment_content_type :logo, content_type: /\Aimage\/.*\Z/
+  validates_attachment_content_type :logo, 
+                                    content_type: /\Aimage\/.*\Z/
+  
+  validates_attachment_size :logo, 
+                            less_than: 2.megabytes
 
   # ----------------------- Validations --------------------
 
-  validates :name, :goal, :created_by_user_id,
+  validates :name, :goal,
             presence: true
 
-  validates_uniqueness_of :name
+  validates_associated :author
+
+  validates_uniqueness_of :name,
+                          message: "duplicate key focus area with this name",
+                          case_sensitive: false
   
   # ----------------------- Methods --------------------
 

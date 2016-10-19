@@ -1,23 +1,16 @@
 <div class="panel panel-info" data-report-id="<%= measure_report.id %>">
   
   <div class="col-xs-12 bg-default">
-    <p>Period from <strong><%= measure_report.date_start %></strong> to <strong><%= measure_report.date_end %></strong></p>
+    <p>Period from <strong><%= formatted_date(measure_report.date_start) %></strong> to <strong><%= formatted_date(measure_report.date_end) %></strong></p>
   </div>
 
   <div class="panel-body">
     
-    <% measure_report.performance_measure.parents.each do |parent| %>
-      <div class="row">
-        <label class="col-xs-3 control-label limit-text capitalize"><%= parent.model_name.human %></label>
-        <div class="col-xs-9">
-          <p><%= parent.name %></p>
-        </div>
-      </div>
-    <% end %>
+    <%= render partial: 'shared/parents_information', locals: { parents: measure_report.performance_measure.parents, label_width: "col-xs-4", content_width: "col-xs-8" } %>
 
     <div class="row">
-      <label class="col-xs-3 control-label limit-text">Measure</label>
-      <div class="col-xs-9">
+      <label class="col-xs-4 control-label measure-report-label">Measure</label>
+      <div class="col-xs-8">
         <p><%= measure_report.performance_measure.description %></p>
       </div>
     </div>
@@ -31,14 +24,11 @@
         
         <div class="row">
           
-          <label class="col-xs-3 control-label limit-text"><%= entry.performance_factor.label_text %></label>
+          <label class="col-xs-4 control-label measure-report-label"><%= entry.performance_factor.label_text %></label>
           
-          <div class="col-xs-3">
-            <p><%= entry.data %></p>
-          </div>
-          
-          <div class="col-xs-6">
-            <p><%= entry.comments %></p>
+          <div class="col-xs-8">
+            <p class="no-margin"><%= entry.data %></p>
+            <p class="text-default"><%= entry.comments %></p>
           </div>
           
         </div>
@@ -50,55 +40,58 @@
     <% end %>
 
     <div class="row">
-      <label class="col-xs-3 control-label limit-text">Performance</label>
-      <div class="col-xs-9">
+      <label class="col-xs-4 control-label measure-report-label">Performance</label>
+      <div class="col-xs-8">
         <p><%= measure_report.performance %></p>
       </div>
     </div>
 
     <div class="row">
-      <label class="col-xs-3 control-label limit-text">Status</label>
-      <div class="col-xs-9">
+      <label class="col-xs-4 control-label measure-report-label">Status</label>
+      <div class="col-xs-8">
         <p><%= measure_report.status %></p>
       </div>
     </div>
 
     <div class="row">
-      <label class="col-xs-3 control-label limit-text">Comments</label>
-      <div class="col-xs-9">
+      <label class="col-xs-4 control-label measure-report-label">Comments</label>
+      <div class="col-xs-8">
         <p><%= measure_report.comments %></p>
       </div>
     </div>
 
     <div class="row">
-      <label class="col-xs-3 control-label limit-text">BMS Comments</label>
-      <div class="col-xs-9">
+      <label class="col-xs-4 control-label measure-report-label">BMS Comments</label>
+      <div class="col-xs-8">
         <p><%= measure_report.bms_comments %></p>
       </div>
     </div>
 
     <div class="row">
-      <label class="col-xs-3 control-label limit-text">Posted by</label>
-      <div class="col-xs-9">
-        <p><%= measure_report.author.try(:email) %></p>
+      <label class="col-xs-4 control-label measure-report-label">Person Reporting To BMS</label>
+      <div class="col-xs-8">
+        <p><%= measure_report.performance_measure.person_reporting_data_to_bms %></p>
       </div>
     </div>
 
     <div class="row">
-      <label class="col-xs-3 control-label limit-text">Last Edited by</label>
-      <div class="col-xs-9">
-        <p><%= measure_report.last_editor.try(:email) %></p>
+      <label class="col-xs-4 control-label measure-report-label">Posted by</label>
+      <div class="col-xs-8">
+        <p><%= measure_report.author.try(:email) %></p>
       </div>
     </div>
 
+    <% if action_name == "show" %>
+      <div class="row">
+        <label class="col-xs-4 control-label measure-report-label">Last Edited by</label>
+        <div class="col-xs-8">
+          <p><%= measure_report.last_editor.try(:email) %></p>
+        </div>
+      </div>
+    <% end -%>
+
     
-    <div class="report-actions">
-      <%= link_to 'Show', measure_report, class: "btn btn-default" unless action_name == 'show' %>
-      <%= link_to 'Back', measure_reports_path, class: "btn btn-default" if action_name == 'show' %>
-      <% if current_user.try(:admin?) || current_user == measure_report.author %>
-        <%= link_to 'Edit', edit_measure_report_path(measure_report), class: "btn btn-default"  %>
-        <%= link_to 'Delete', measure_report, method: :delete, remote: true, data: {confirm: 'Are you sure you want to delete this report?'}, class: "btn btn-danger" %>
-      <% end %>
-    </div>
+    <%= render partial: "shared/card_actions", locals: { resource: measure_report } %>
+
   </div>
 </div>

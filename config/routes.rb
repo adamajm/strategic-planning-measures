@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
   
   
+  resources :initiative_planning_guides
+  namespace :admin do
+    get 'user_views' => 'user_views#create', as: 'view_as_user'
+    delete 'user_views' => 'user_views#destroy', as: 'cancel_view_as_user'
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -19,14 +25,14 @@ Rails.application.routes.draw do
   # Example resource route (maps HTTP verbs to controller actions automatically):
   resources :key_focus_areas
   resources :objectives
-  resources :performance_measures
-  
-  resources :measure_reports do
-    get 'download', on: :collection
+  resources :performance_measures do
+    get 'performance_measures', on: :collection, as: 'download'
   end
   
-  resources :performance_factors
-  resources :performance_factor_entries
+  resources :measure_reports do
+    get 'measure_reports', on: :collection, as: 'download'
+  end
+  
 
   # Example resource route with options:
   #   resources :products do

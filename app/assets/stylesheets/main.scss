@@ -5,7 +5,10 @@ html, body {
   height: 100%;
   width: 100%;
   margin: 0;
-  padding: 0;
+}
+
+html body {
+  padding: 70px 0 20px;
 }
 
 a {
@@ -20,10 +23,104 @@ a.self-name {
   }
 }
 
+select.form-control[disabled] {
+  color: rgba($black, 0.2);
+}
+
+a.btn.btn-icon {
+  border-radius: 50%;
+  // padding: 8px 12px;
+  height: 30px;
+  width: 30px;
+  padding: 4px 7px;
+  margin-bottom: 3px;
+
+  &:hover {
+    color: #1b5e20;
+  }
+}
+
+.froala-container {
+  position: relative;
+}
+
+#gantt-chart {
+  @include box-shadow( 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12) );
+  // min-height: 400px;
+  width: 100%;
+  background-color: #fff;
+}
+
+.welcome.index {
+  .city-text {
+    color: $dark-indigo;
+    font-weight: 500;
+  } 
+
+  .strategic-text {
+    color: $indigo;
+  }
+}
+
+#contact-container {
+  .contact-card {
+    .photo-container {
+      height: auto;
+    }
+  }
+}
+
+@include keyframes(slide-in-ltr) {
+  from { @include transform(translateX(-100px)); opacity: 0; }
+  to { @include transform(translateX(0)); opacity: 1; }
+}
+@include keyframes(slide-in-rtl) {
+  from { @include transform(translateX(100px)); opacity: 0; }
+  to { @include transform(translateX(0)); opacity: 1; }
+}
+@include keyframes(slide-in-btt) {
+  from { @include transform(translateY(100px)); opacity: 0; }
+  to { @include transform(translateX(0)); opacity: 1; }
+}
+@include keyframes(slide-in-ttb) {
+  from { @include transform(translateY(-100px)); opacity: 0; }
+  to { @include transform(translateX(0)); opacity: 1; }
+}
+@include keyframes(slide-in-ttb-short) {
+  from { @include transform(translateY(-20px)); opacity: 0; }
+  to { @include transform(translateX(0)); opacity: 1; }
+}
+
+.container-fluid {
+  .info-box {
+    position: fixed;
+    padding: 15px;
+    right: 0;
+    bottom: 20px;
+    margin-bottom: 0;
+    z-index: 2;
+    background-color: $teal;
+    color: $light-white;
+    opacity: 0;
+    @include transform(translateY(100px));
+    @include box-shadow( 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12) );
+    @include animation( slide-in-btt 1s $in-out-cubic 1ms 1 normal forwards );
+
+    a:not(.close) {
+      opacity: 0.87;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+  }
+}
+
 md-card {
 
   md-card-title-text {
-    padding-right: 10px;
+    padding-right: 20px;
   }
   
   .card-media {
@@ -34,6 +131,16 @@ md-card {
 label.control-label {
   font-weight: 600;
   color: rgba($black, 0.6);
+}
+
+.spaced-items + .spaced-items {
+  margin-left: 15px;
+}
+
+form {
+  .form-divider {
+    padding: 30px;
+  }
 }
 
 form {
@@ -76,8 +183,16 @@ form {
   color: $indigo;
 }
 
+.text-default {
+  color: $dark-grey
+}
+
 .logo-row {
   // background-color: $indigo;
+  margin-bottom: 15px;
+}
+
+.break-after {
   margin-bottom: 15px;
 }
 
@@ -89,9 +204,19 @@ form {
   color: $danger;
   font-weight: 500;
   text-transform: italic;
+  opacity: 0;
+  @include transform( translateY(-20px) );
+  @include animation( slide-in-ttb-short 600ms $in-out-cubic 0s 1 normal forwards );
 }
 
+.form-group .form-hint {
+  font-size: 12px;
+  color: rgba($black, 0.5);
+}
 
+.no-margin {
+  margin: 0;
+}
 
 .checkbox-danger {
   &:focus:after {
@@ -104,18 +229,26 @@ form {
   }
 }
 
+.kfa-logo-card {
+  width: 40px;
+}
+
 .kfa-subheader {
   color: $indigo;
 }
 
-.kfa-actions, .objective-actions, .measure-actions, .report-actions {
-  padding-top: 10px;
+.card-actions {
+  // padding-top: 10px;
 }
 
 .flex-row {
   @include display-flex;
   @include flex-direction( row );
   flex-wrap: wrap;
+}
+
+.margin-right-sm {
+  margin-right: 10px;
 }
 
 .measurable-name {
@@ -133,10 +266,23 @@ input:focus, a:focus, button:focus, select:focus, form:focus {
   text-transform: capitalize;
 }
 
-.limit-text {
+.limit-text, text {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.icon-action {
+  padding: 5px 10px;
+}
+
+.no-events {
+  pointer-events: none;
+}
+
+.measure-report-label, .form-label {
+  line-height: 14px;
+  padding: 7px 0 3px;
 }
 
 .devise-link {
@@ -145,27 +291,6 @@ input:focus, a:focus, button:focus, select:focus, form:focus {
 
 .bg-default {
   background-color: rgba($dark-grey, 0.03);
-}
-
-div[data-report-id] {
-  p {
-    margin: 0;
-    padding: 2px 0;
-  }
- 
-  .report-actions {
-    @include display-flex;
-    @include flex-direction( row );
-    // Pending mixins
-    justify-content: flex-end;
-    align-content: center;
-    align-items: center;
-    max-width: 100%;
-  }
-
-  .btn:not(:last-child) {
-    margin-right: 10px;
-  }
 }
 
 .flex {
@@ -202,3 +327,45 @@ div[data-report-id] {
     }
   }
 }
+
+.striked-text {
+  text-decoration: line-through;
+  color: rgba($danger, 0.7);
+}
+
+.initiative_planning_guides {
+  .year-container {
+    position: relative;
+    .editable-year {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 5px 4px;
+      margin: 0 15px;
+      background-color: rgba($black, 0.01);
+      // border: 1px inset rgba($black, 0.1);
+      width: calc(100% - 30px);
+      box-sizing: border-box;
+
+      .update-year-link {
+        padding-top: 0;
+      }
+    }
+  }
+
+  form .form-group p, form .form-group a:not(.btn) {
+    // padding-top: 0;
+    margin: 0;
+  }
+}
+
+
+@media screen and (max-width: 599px) {
+  .navbar {
+    .navbar-brand {
+      font-size: 20px;
+    }
+  }
+}
+
+

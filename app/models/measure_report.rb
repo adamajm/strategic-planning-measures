@@ -4,13 +4,7 @@ class MeasureReport < ActiveRecord::Base
 
   belongs_to :performance_measure
 
-  belongs_to  :author, 
-              foreign_key: :created_by_user_id, 
-              class_name: "User"
-  
-  belongs_to  :last_editor, 
-              foreign_key: :last_updated_by_user_id, 
-              class_name: "User"
+  include UserRules
 
   has_many  :performance_factor_entries, 
             dependent: :destroy
@@ -28,9 +22,14 @@ class MeasureReport < ActiveRecord::Base
                                 reject_if: :all_blank,
                                 allow_destroy: true
 
+  # ----------------------- Callbacks --------------------
+  
+  before_update :editor_is_admin_or_author
+
+
   # ----------------------- Validations --------------------
 
-  validates :performance_measure_id, :date_start, :date_end, :performance, :created_by_user_id,
+  validates :performance_measure_id, :date_start, :date_end,
             presence: true
 
   # ----------------------- Methods --------------------
@@ -42,6 +41,14 @@ class MeasureReport < ActiveRecord::Base
         csv << report.attributes.values_at(*column_names)
       end
     end
+  end
+
+  def self.filter_query(query = {})
+    # Cover cases when the hash is empty (regular index landing)
+    # or a query is passed via form POST, but the values are not filled (no value selected in dropdown)
+    return all if query.empty? || query.values.all?(&:empty?)
+    # Otherwise execute the SQL query (parameters have already been sanitized at this point so we can safely use them)
+    self.where(query)
   end
   
 end

@@ -1,0 +1,209 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <%= form_for @initiative_planning_guide, html: { class:"form-horizontal" } do |initiative_fields| %>
+        <fieldset>
+          <legend><%= action_name.capitalize %> Initiative Planning Guide Form</legend>
+          
+          <%= render partial: 'shared/error_messages', locals: { resource: @initiative_planning_guide } %>
+
+          <%= planning_guide_parents(action_name, initiative_fields) %>
+          
+          <div class="form-group">
+            <%= initiative_fields.label :description, "Initiative*", class: "col-lg-2 control-label" %>
+            <div class="col-lg-10">
+              <%= initiative_fields.text_field :description, class: "form-control", required: true %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <%= initiative_fields.label :initiative_stage, "Initiative Stage", class: "col-lg-2 control-label" %>
+            <div class="col-lg-4">
+              <%= initiative_fields.text_field :initiative_stage, class: "form-control" %>
+            </div>
+            
+            <%= initiative_fields.fields_for :initiative_plan_years, @initiative_planning_guide.initiative_plan_years.build do |year_fields| %>
+              <%= year_fields.label :year, "Plan Year*", class: "col-lg-1 control-label" %>
+              <div class="col-lg-5 year-container">
+                <%= last_submitted_year(@initiative_planning_guide) %>
+                <%= year_fields.number_field :year, class: "form-control" %>
+              </div>
+            <% end %>
+          </div>
+          
+          
+          <%= initiative_fields.fields_for :implementation_team_contact, @implementation_team_contact do |contact_fields| %>
+            <%= render partial: 'team_contact', locals: { fields: contact_fields, label: "Implementation Team Contact Person*" } %>
+          <% end %>
+          
+          <div class="form-divider"></div>
+
+
+          <div class="row">
+            <div class="col-md-6">
+              <%= react_component 'AsyncButton', { url: "/initiative_planning_guides/new", tooltipTitle: "Add Member", buttonClasses: "add-member", iconClass: "fa-plus", legend: "Implementation Team Leads", selector: 'implementation_team_leads'}, { class: "", tag: "div", id: "implementation_team_leads" } %>
+              
+              <%= initiative_fields.fields_for :implementation_team_leads, @implementation_team_leads do |team_leads_fields| %>
+                <%= render partial: 'initiative_humans_fields', locals: { fields: team_leads_fields } %>
+              <% end %>
+            </div>
+
+            <div class="col-md-6">
+              <%= react_component 'AsyncButton', { url: "/initiative_planning_guides/new", tooltipTitle: "Add Member", buttonClasses: "add-member", iconClass: "fa-plus", legend: "Extended Project Members", selector: 'extended_project_members'}, { class: "", tag: "div", id: "extended_project_members" } %>
+              
+              <%= initiative_fields.fields_for :extended_project_members, @extended_project_members do |extended_members_fields| %>
+                <%= render partial: 'initiative_humans_fields', locals: { fields: extended_members_fields } %>
+              <% end %>
+            </div>
+          </div>
+
+
+          <div class="form-divider"></div>
+
+
+          <div class="row">
+            <div class="col-md-6">
+              <%= react_component 'AsyncButton', { url: "/initiative_planning_guides/new", tooltipTitle: "Add Member", buttonClasses: "add-member", iconClass: "fa-plus", legend: "Project Partners (Internal/Departmental Partners)", selector: 'project_partners_internal'}, { class: "", tag: "div", id: "project_partners_internal" } %>
+              
+              <%= initiative_fields.fields_for :project_partners_internal, @project_partners_internal do |f| %>
+                <%= render partial: 'initiative_humans_fields', locals: { fields: f } %>
+              <% end %>
+            </div>
+
+            <div class="col-md-6">
+              <%= react_component 'AsyncButton', { url: "/initiative_planning_guides/new", tooltipTitle: "Add Member", buttonClasses: "add-member", iconClass: "fa-plus", legend: "Project Partners (External/Community Partners)", selector: 'project_partners_external'}, { class: "", tag: "div", id: "project_partners_external" } %>
+              
+              <%= initiative_fields.fields_for :project_partners_external, @project_partners_external do |f| %>
+                <%= render partial: 'initiative_humans_fields', locals: { fields: f } %>
+              <% end %>
+            </div>
+          </div>
+
+
+          <div class="form-divider"></div>
+          
+          
+          <div class="form-group">
+            <%= initiative_fields.label :project_commitment, class: "col-lg-2 control-label" %>
+            <div class="col-lg-10">
+              
+              <div class="row">
+                <div class = "col-xs-12">
+                  <%= initiative_fields.radio_button(:project_commitment, "once") %>
+                  <%= initiative_fields.label(:project_commitment_once, "One-Time Commitment") %>
+                </div>
+                <div class = "col-xs-12">
+                  <%= initiative_fields.radio_button(:project_commitment, "ongoing") %>
+                  <%= initiative_fields.label(:project_commitment_ongoing, "Ongoing Commitment") %>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= initiative_fields.label :project_resources, class: "col-lg-2 control-label" %>
+            <div class="col-lg-10">
+
+              <%= initiative_fields.collection_check_boxes :project_resources, InitiativePlanningGuide.project_resource_values, :id, :name, {}, class: "" do |tags| %>
+                <div class="collection-check-box">
+                  <%= tags.check_box %>
+                  <%= tags.label %>
+                </div>
+              <% end -%>
+              
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= initiative_fields.label :initiative_overview, class: "col-lg-2 control-label" %>
+            <div class="col-lg-10 froala-container">
+              <%= initiative_fields.text_area :initiative_overview, class: "" %>
+            </div>
+          </div>
+
+
+          <div class="form-divider"></div>
+
+          <%# react_component 'AsyncButton', { url: "/initiative_planning_guides/new", tooltipTitle: "Add Goal/Outcome", buttonClasses: "add-goal", iconClass: "fa-plus", legend: "Anticipated Outcomes", selector: 'goal'}, { class: "", tag: "div", id: "goals_and_outcomes" } %>
+          <legend class="sublegend">Anticipated Outcomes</legend>          
+          <%= initiative_fields.fields_for :goals_and_outcomes do |fields| %>
+            <div class="form-group">  
+              <div class="col-lg-6">
+                <%= fields.text_area :goal, class: "form-control", placeholder: "Goal" %>
+              </div>
+              <div class="col-lg-6">
+                <%= fields.text_area :outcome, class: "form-control", placeholder: "Outcome" %>
+              </div>
+            </div>
+          <% end %>
+
+          
+          <div class="form-divider"></div>
+
+
+          <div class="form-group">
+            <%= initiative_fields.label :linked_measure_ids, "Performance Measures", class: "col-lg-2 control-label" %>
+            <div class="col-lg-10">
+
+              <%= initiative_fields.collection_select :linked_measure_ids, PerformanceMeasure.order(description: :asc), :id, :description, {}, { class: "form-control custom-select", multiple: true } %>
+              
+            </div>
+          </div>
+
+
+          <div class="form-divider"></div>
+
+
+          <div class="form-group">
+            <%= initiative_fields.label :major_milestones, "Major Milestones and Deliverables", class: "col-lg-2 control-label" %>
+            <div class="col-lg-10 froala-container">
+              <%= initiative_fields.text_area :major_milestones, class: ""%>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
+              <%= link_to 'Cancel', initiative_planning_guides_path, class: "btn btn-default" %>
+              <%= initiative_fields.submit class: "btn btn-primary" %>
+            </div>
+          </div>
+          
+        </fieldset>
+      <% end %>
+    </div>
+  </div>  
+</div>
+
+<script type="text/javascript">
+
+  var amazonConfig = {
+    bucket: '<%= @hash[:bucket] %>',
+    region: 's3-us-west-2',
+    keyStart: '<%= @hash[:key_start] %>',
+    params: {
+      acl: '<%= @hash[:acl] %>',
+      AWSAccessKeyId: '<%= @hash[:access_key] %>',
+      policy: '<%= @hash[:policy] %>',
+      signature: '<%= @hash[:signature] %>',
+    }
+  };
+
+  var froalaDefaults = {
+    toolbarInline: false,
+    heightMin: 100,
+    // heightMax: 300,
+    toolbarButtons: ['fullscreen', '|', 'bold', 'italic', 'underline', 'strikeThrough', '|', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', '|', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll'],
+    toolbarButtonsMD: ['fullscreen', '|', 'bold', 'italic', 'underline', 'strikeThrough', '|', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', '|', 'insertTable', 'undo', 'redo'],
+    imageUploadToS3: $.extend({}, amazonConfig),
+    fileUploadToS3: $.extend({}, amazonConfig)
+  };
+
+  $('#initiative_planning_guide_major_milestones').froalaEditor( $.extend({}, froalaDefaults, {
+    placeholderText: 'Timeline and expected deliverables'
+  }) );
+
+  $('#initiative_planning_guide_initiative_overview').froalaEditor($.extend({}, froalaDefaults, {
+    placeholderText: 'What problem is being solved? What are the current challenges or concerns? What is the current status of the initiative?'
+  }) );
+</script>
